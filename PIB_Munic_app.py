@@ -89,7 +89,7 @@ def graf_pie(cod_mun,df):
 # tabela do PIB
 def tab_pib(UF, Municipio):
     df_est = df_dados_pib[(df_dados_pib['ANO']==2021) & (df_dados_pib.UF==UF)][['COD_MUNIC','NOME_MUNIC','PIB','PIB_CAP']]
-    #
+    nMun = len(df_est)#
     df_est = df_est.sort_values("PIB", ascending=False)
     df_est['RPIB'] = list(range(1,len(df_est)+1))
     df_est = df_est.sort_values("PIB_CAP", ascending=False)
@@ -127,7 +127,7 @@ def tab_pib(UF, Municipio):
     table_per['PIB(per cap.)'] = table_per['PIB(per cap.)'].map("R$ {:,.2f}".format)
     table_per['Rank'] = table_per['Rank'].map("{:,.0f}\u00BA".format)
     #
-    return table_pib, table_per, pib_pos, per_pos    
+    return table_pib, table_per, pib_pos, per_pos, nMun    
 #
 # # Convert PIB to text
 def format_numberPIB(num):
@@ -178,6 +178,8 @@ with st.sidebar:
         
         
         map_munic(SG_UF,cod_mun, munic_selec)
+        tab1, tab2, pib_p, per_p, nMun = tab_pib(SG_UF,cod_mun)
+        st.write('O estado conta com ', nMun, ' Municípios')
 
 # App layout
 col = st.columns((1.5, 3.25, 3.25), gap='small')
@@ -237,7 +239,7 @@ with col[1]:
     st.markdown('### PIB')
     if press_button:
         #
-        tab1, tab2, pib_p, per_p = tab_pib(SG_UF,cod_mun)
+        # tab1, tab2, pib_p, per_p = tab_pib(SG_UF,cod_mun)
         #
         if pib_p >4:
             st.dataframe(tab1.style.map(lambda _: 'color:blue;background-color: yellow', subset=(tab1.index[4:,],)),hide_index=True)
